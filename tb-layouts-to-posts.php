@@ -233,6 +233,7 @@ function themeblvd_ltp_frontend_config( $config ) {
 			
 			// Make final changes to config
 			$config['builder'] = $layout_id;
+			$config['builder_post_id'] = $layout_post_id; // Needed in framework v2.2.1+
 			$config['featured'] = $featured;
 			$config['featured_below'] = $featured_below;
 			$config['sidebar_layout'] = $sidebar_layout;
