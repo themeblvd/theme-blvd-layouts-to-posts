@@ -3,7 +3,7 @@ Author URI: http://www.jasonbobich.com
 Contributors: themeblvd
 Tags: layout builder, builder, custom layouts, themeblvd, theme blvd, jason bobich
 Requires at least: 3.2
-Stable Tag: 1.0.0
+Stable Tag: 1.0.1
 
 This plugin extends the Theme Blvd Layout Builder so you can assign your custom layouts to standard posts and custom post types.
 
@@ -34,6 +34,8 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 1. Meta box added to all post edit screens.
 
 == Changelog ==
+
+= 1.0.1 =
 
 = 1.0.0 =
 
