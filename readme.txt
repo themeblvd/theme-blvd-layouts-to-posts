@@ -37,6 +37,8 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 
 = 1.0.1 =
 
+* Added compatibility for Theme Blvd framework v2.2.1+.
+
 = 1.0.0 =
 
 * This is the first release.
