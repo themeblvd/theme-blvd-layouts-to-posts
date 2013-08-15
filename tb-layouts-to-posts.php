@@ -207,32 +207,58 @@ function themeblvd_ltp_frontend_config( $config ) {
 	// If any single post type
 	if( is_single() ) {
 
-		// Get layout ID from our custom meta box option
-		$layout_id = get_post_meta( $post->ID, '_tb_custom_layout', true );
+		// Get layout name if its been saved to this post.
+		$layout_name = get_post_meta( $post->ID, '_tb_custom_layout', true );
 
 		// Only continue if a custom layout was selected
-		if( $layout_id ) {
+		if( $layout_name ) {
 
-			// Get custom layout's settings and elements
-			$layout_post_id = themeblvd_post_id_by_name( $layout_id, 'tb_layout' );
-			$layout_settings = get_post_meta( $layout_post_id, 'settings', true );
-			$layout_elements = get_post_meta( $layout_post_id, 'elements', true );
+			if ( post_password_required() || ( 'private' == get_post_status() && ! current_user_can( 'edit_posts' ) ) ) {
 
-			// Featured areas
-			$featured = themeblvd_featured_builder_classes( $layout_elements, 'featured' );
-			$featured_below = themeblvd_featured_builder_classes( $layout_elements, 'featured_below' );
+				// Password is currently required or status
+				// is private and this isn't an admin. So the
+				// custom layout doesn't get used.
+				$layout_name = 'wp-private';
 
-			// Sidebar Layout
-			$sidebar_layout = $layout_settings['sidebar_layout'];
-			if( 'default' == $sidebar_layout )
-				$sidebar_layout = themeblvd_get_option( 'sidebar_layout', null, apply_filters( 'themeblvd_default_sidebar_layout', 'sidebar_right' ) );
+			} else {
 
-			// Make final changes to config
-			$config['builder'] = $layout_id;
-			$config['builder_post_id'] = $layout_post_id; // Needed in framework v2.2.1+
-			$config['featured'] = $featured;
-			$config['featured_below'] = $featured_below;
-			$config['sidebar_layout'] = $sidebar_layout;
+				// Get custom layout's settings and elements
+				$config['builder_post_id'] = themeblvd_post_id_by_name( $layout_name, 'tb_layout' ); // Needed in framework v2.2.1+
+
+				if ( $config['builder_post_id'] ) {
+
+					// Setup featured area classes
+					$layout_elements = get_post_meta( $config['builder_post_id'], 'elements', true );
+
+					if ( function_exists( 'themeblvd_featured_builder_classes' ) ) {
+
+						// Theme Blvd Framework v2-2.2
+						$config['featured'] = themeblvd_featured_builder_classes( $layout_elements, 'featured' );
+						$config['featured_below'] = themeblvd_featured_builder_classes( $layout_elements, 'featured_below' );
+
+					} else {
+
+						// Theme Blvd Framework v2.3+
+						$frontent_init = Theme_Blvd_Frontend_Init::get_instance();
+						$config['featured'] = $frontent_init->featured_builder_classes( $layout_elements, 'featured' );
+						$config['featured_below'] = $frontent_init->featured_builder_classes( $layout_elements, 'featured_below' );
+
+					}
+
+					// Sidebar Layout
+					$layout_settings = get_post_meta( $config['builder_post_id'], 'settings', true );
+					$config['sidebar_layout'] = $layout_settings['sidebar_layout'];
+
+					if( 'default' == $config['sidebar_layout'] ) {
+						$config['sidebar_layout'] = themeblvd_get_option( 'sidebar_layout', null, apply_filters( 'themeblvd_default_sidebar_layout', 'sidebar_right' ) );
+					}
+
+				}
+
+			}
+
+			// Set layout name
+			$config['builder'] = $layout_name;
 
 		}
 

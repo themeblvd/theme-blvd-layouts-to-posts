@@ -37,6 +37,9 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 
 = 1.0.2 =
 
+* Added compatibility for Theme Blvd framework v2.3+.
+* Added support for private and password protected posts.
+
 = 1.0.1 =
 
 * Added compatibility for Theme Blvd framework v2.2.1+.
