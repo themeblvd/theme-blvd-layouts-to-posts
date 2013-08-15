@@ -34,12 +34,12 @@ define( 'TB_LTP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
  *
  * @since 1.0.0
  */
-
 function themeblvd_ltp_init() {
 
 	// Check to make sure Theme Blvd Framework is running
 	if( ! defined( 'TB_FRAMEWORK_VERSION' ) ) {
 		add_action( 'admin_notices', 'themeblvd_ltp_notice' );
+		add_action( 'admin_init', 'themeblvd_ltp_disable_nag' );
 		return;
 	}
 
@@ -65,7 +65,6 @@ add_action( 'after_setup_theme', 'themeblvd_ltp_init' );
  *
  * @since 1.0.0
  */
-
 function themeblvd_ltp_textdomain() {
 	load_plugin_textdomain( 'themeblvd_ltp', false, TB_LTP_PLUGIN_DIR . '/lang' );
 }
@@ -78,12 +77,51 @@ add_action( 'plugins_loaded', 'themeblvd_ltp_textdomain' );
  *
  * @since 1.0.0
  */
-
 function themeblvd_ltp_notice() {
-	echo '<div class="updated">';
-	echo '<p>'.__( 'You currently have the "Theme Blvd Layouts to Posts" plugin activated, however you are not using a theme with Theme Blvd Framework v2.0+, and so this plugin will not do anything.', 'themeblvd_ltp' ).'</p>';
-	// @todo - echo '<p>'.__( 'In order for the "Theme Blvd Layouts to Posts" plugin to do anything, you must have theme with Theme Blvd framework 2.2+ running in conjunction the Theme Blvd Layout Builder plugin.', 'themeblvd_ltp' ).'</p>';
-	echo '</div>';
+
+	global $current_user;
+
+	// DEBUG: delete_user_meta( $current_user->ID, 'tb_sliders_no_framework' );
+	if ( ! get_user_meta( $current_user->ID, 'tb_ltp_no_framework' ) ){
+		echo '<div class="updated">';
+		echo '<p>'.__( 'You currently have the "Theme Blvd Layouts to Posts" plugin activated, however you are not using a theme with Theme Blvd Framework v2.0+, and so this plugin will not do anything.', 'themeblvd_ltp' ).'</p>';
+		echo '<p><a href="'.themeblvd_ltp_disable_url('tb_ltp_no_framework').'">'.__('Dismiss this notice', 'themeblvd_ltp').'</a> | <a href="http://www.themeblvd.com" target="_blank">'.__('Visit ThemeBlvd.com', 'themeblvd_ltp').'</a></p>';
+		echo '</div>';
+	}
+}
+
+/**
+ * Dismiss an admin notice.
+ *
+ * @since 1.0.2
+ */
+function themeblvd_ltp_disable_nag() {
+
+	global $current_user;
+
+    if ( isset( $_GET['tb_nag_ignore'] ) ) {
+         add_user_meta( $current_user->ID, $_GET['tb_nag_ignore'], 'true', true );
+	}
+}
+
+/**
+ * Disable a nag message URL.
+ *
+ * @since 1.0.2
+ */
+function themeblvd_ltp_disable_url( $id ) {
+
+	global $pagenow;
+
+	$url = admin_url( $pagenow );
+
+	if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+		$url .= sprintf( '?%s&tb_nag_ignore=%s', $_SERVER['QUERY_STRING'], $id );
+	} else {
+		$url .= sprintf( '?tb_nag_ignore=%s', $id );
+	}
+
+	return $url;
 }
 
 /**
@@ -91,7 +129,6 @@ function themeblvd_ltp_notice() {
  *
  * @since 1.0.0
  */
-
 function themeblvd_ltp_add_meta_box() {
 
 	// Get post types
@@ -111,7 +148,6 @@ function themeblvd_ltp_add_meta_box() {
  *
  * @since 1.0.0
  */
-
 function themeblvd_ltp_display_meta_box(){
 
 	global $post;
@@ -175,7 +211,6 @@ function themeblvd_ltp_display_meta_box(){
  *
  * @since 1.0.0
  */
-
 function themeblvd_ltp_save_meta_box( $post_id ) {
 	// If our meta box's value was sent, let's save it.
 	if( isset( $_POST['themeblvd_ltp']['_tb_custom_layout'] ) ){
@@ -199,7 +234,6 @@ function themeblvd_ltp_save_meta_box( $post_id ) {
  *
  * @since 1.0.0
  */
-
 function themeblvd_ltp_frontend_config( $config ) {
 
 	global $post;
@@ -277,7 +311,6 @@ function themeblvd_ltp_frontend_config( $config ) {
  *
  * @since 1.0.0
  */
-
 function themeblvd_ltp_redirect( $config ) {
 	// Include page template and exit if this is a
 	// single post AND the global config says there
