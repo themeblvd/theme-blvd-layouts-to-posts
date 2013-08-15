@@ -158,7 +158,7 @@ function themeblvd_ltp_display_meta_box(){
 
 	// Custom Layouts for options array
 	$select = array( '' => '-- '.__( 'No Custom Layouts', 'themeblvd_ltp' ).' --' );
-	$layouts = get_posts('post_type=tb_layout&numberposts=-1');
+	$layouts = get_posts('post_type=tb_layout&orderby=title&order=ASC&numberposts=-1');
 
 	if( $layouts ){
 

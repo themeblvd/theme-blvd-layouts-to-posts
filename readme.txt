@@ -40,6 +40,7 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 * Added compatibility for Theme Blvd framework v2.3+.
 * Added support for private and password protected posts.
 * Added "Dismiss" link for admin framework nag.
+* Adjusted Custom Layout selection meta box to list layouts alphabetically.
 
 = 1.0.1 =
 
