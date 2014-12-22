@@ -2,7 +2,7 @@
 /*
 Plugin Name: Theme Blvd Layouts to Posts
 Description: This plugin extends the Theme Blvd Layout Builder to allow you to assign your custom layouts to standard posts and custom post types.
-Version: 1.0.2
+Version: 1.0.3
 Author: Jason Bobich
 Author URI: http://jasonbobich.com
 License: GPL2
@@ -25,7 +25,7 @@ License: GPL2
 
 */
 
-define( 'TB_LTP_PLUGIN_VERSION', '1.0.2' );
+define( 'TB_LTP_PLUGIN_VERSION', '1.0.3' );
 define( 'TB_LTP_PLUGIN_DIR', dirname( __FILE__ ) );
 define( 'TB_LTP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
 
