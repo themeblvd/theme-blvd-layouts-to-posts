@@ -37,6 +37,8 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 
 = 1.0.3 =
 
+* Fixed styling on meta box for newer themes.
+
 = 1.0.2 =
 
 * Added compatibility for Theme Blvd framework v2.3+.

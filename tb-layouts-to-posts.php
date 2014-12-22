@@ -169,18 +169,27 @@ function themeblvd_ltp_display_meta_box(){
 		}
 	}
 
-	// Setup Options array
 	$options = array(
 		array(
+			'id' 	=> '_tb_placeholder',
+			'std'	=> 1,
+			'type'	=> 'hidden'
+		),
+		array(
 			'id'		=> '_tb_custom_layout',
-			'desc' 		=> __( 'If you\'d like to replace this post with a custom layout from the builder, you can select one from the dropdown menu.', 'themeblvd_ltp' ),
+			'desc' 		=> __( 'If you\'d like to replace this post with a template from the Layout Builder, you can select one from the dropdown menu.', 'themeblvd_ltp' ),
 			'type' 		=> 'select',
 			'options'	=> $select
 		)
 	);
 
+	if ( version_compare(TB_FRAMEWORK_VERSION, '2.5.0', '<') ) {
+		unset($options[0]);
+		$options[1] = __( 'If you\'d like to replace this post with a custom layout from the Layout Builder, you can select one from the dropdown menu.', 'themeblvd_ltp' );
+	}
+
 	// Start output
-    echo '<div class="tb-meta-box">';
+    echo '<div id="optionsframework" class="tb-meta-box side">';
 
 	// Display options form
 	// @todo - After framework v2.2 is released, we can
