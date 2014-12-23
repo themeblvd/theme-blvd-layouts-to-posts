@@ -168,7 +168,7 @@ function themeblvd_ltp_display_meta_box() {
 	$settings = array( '_tb_custom_layout' => $value );
 
 	// Custom Layouts for options array
-	$select = array( '' => '-- '.__( 'No Custom Layouts', 'theme-blvd-layouts-to-posts' ).' --' );
+	$select = array( '' => '-- '.__( 'No Custom Templates', 'theme-blvd-layouts-to-posts' ).' --' );
 	$layouts = get_posts('post_type=tb_layout&orderby=title&order=ASC&numberposts=-1');
 
 	if( $layouts ) {
@@ -196,7 +196,6 @@ function themeblvd_ltp_display_meta_box() {
 
 	if ( version_compare(TB_FRAMEWORK_VERSION, '2.5.0', '<') ) {
 		unset($options[0]);
-		$options[1] = __( 'If you\'d like to replace this post with a custom layout from the Layout Builder, you can select one from the dropdown menu.', 'theme-blvd-layouts-to-posts' );
 	}
 
 	// Start output

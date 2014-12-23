@@ -5,17 +5,17 @@ Tags: layout builder, builder, custom layouts, themeblvd, theme blvd, jason bobi
 Requires at least: 3.2
 Stable Tag: 1.0.3
 
-This plugin extends the Theme Blvd Layout Builder so you can assign your custom layouts to standard posts and custom post types.
+This plugin extends the Theme Blvd Layout Builder so you can assign your custom templates to standard posts and custom post types.
 
 == Description ==
 
-This plugin extends the Theme Blvd Layout Builder so you can assign your custom layouts to standard posts and custom post types.
+This plugin extends the Theme Blvd Layout Builder so you can assign your custom templates to standard posts and custom post types.
 
-**Note: You must have a [Theme Blvd theme](http://themeforest.net/user/ThemeBlvd/portfolio "Theme Blvd WordPress themes") installed with the Layout Builder for this plugin to do anything.**
+**Note: You must have a [Theme Blvd theme](http://themeforest.net/user/ThemeBlvd/portfolio "Theme Blvd WordPress themes") installed with the [Layout Builder](https://wordpress.org/plugins/theme-blvd-layout-builder/) for this plugin to do anything.**
 
 = Customization =
 
-This is a pretty simple plugin, however it will add the custom layout selection meta box to all post types automatically. If you'd like to exlude the meta box from certain post types, you can unset those post types from the array attached to the filter `themeblvd_ltp_post_types`.
+This is a pretty simple plugin, however it will add the custom template selection meta box to all post types automatically. If you'd like to exlude the meta box from certain post types, you can unset those post types from the array attached to the filter `themeblvd_ltp_post_types`.
 
 `function my_ltp_post_types( $post_types ) {
 	unset( $post_types['post_type_to_remove'] );
