@@ -38,6 +38,8 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 = 1.0.3 =
 
 * Added compatibility for Theme Blvd framework v2.5+.
+* GlotPress compatibility (for 2015 wordpress.org release).
+* Minor security fixes.
 
 = 1.0.2 =
 

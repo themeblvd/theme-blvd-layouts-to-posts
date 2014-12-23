@@ -37,7 +37,7 @@ define( 'TB_LTP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
 function themeblvd_ltp_init() {
 
 	// Check to make sure Theme Blvd Framework is running
-	if( ! defined( 'TB_FRAMEWORK_VERSION' ) ) {
+	if( ! defined( 'TB_FRAMEWORK_VERSION' ) || ! defined( 'TB_BUILDER_PLUGIN_VERSION' ) ) {
 		add_action( 'admin_notices', 'themeblvd_ltp_notice' );
 		add_action( 'admin_init', 'themeblvd_ltp_disable_nag' );
 		return;
@@ -66,13 +66,13 @@ add_action( 'after_setup_theme', 'themeblvd_ltp_init' );
  * @since 1.0.0
  */
 function themeblvd_ltp_textdomain() {
-	load_plugin_textdomain( 'themeblvd_ltp', false, TB_LTP_PLUGIN_DIR . '/lang' );
+	load_plugin_textdomain( 'theme-blvd-layouts-to-posts', false, TB_LTP_PLUGIN_DIR . '/lang' );
 }
-add_action( 'plugins_loaded', 'themeblvd_ltp_textdomain' );
+add_action( 'init', 'themeblvd_ltp_textdomain' );
 
 /**
  * Display warning telling the user they must have a
- * theme with Theme Blvd framework v2.2+ installed in
+ * theme with Theme Blvd framework v2.0+ installed in
  * order to run this plugin.
  *
  * @since 1.0.0
@@ -81,11 +81,12 @@ function themeblvd_ltp_notice() {
 
 	global $current_user;
 
-	// DEBUG: delete_user_meta( $current_user->ID, 'tb_sliders_no_framework' );
-	if ( ! get_user_meta( $current_user->ID, 'tb_ltp_no_framework' ) ){
+	// DEBUG: delete_user_meta( $current_user->ID, 'tb-nag-layouts-to-posts-no-framework' );
+
+	if ( ! get_user_meta( $current_user->ID, 'tb-nag-layouts-to-posts-no-framework' ) ) {
 		echo '<div class="updated">';
-		echo '<p>'.__( 'You currently have the "Theme Blvd Layouts to Posts" plugin activated, however you are not using a theme with Theme Blvd Framework v2.0+, and so this plugin will not do anything.', 'themeblvd_ltp' ).'</p>';
-		echo '<p><a href="'.themeblvd_ltp_disable_url('tb_ltp_no_framework').'">'.__('Dismiss this notice', 'themeblvd_ltp').'</a> | <a href="http://www.themeblvd.com" target="_blank">'.__('Visit ThemeBlvd.com', 'themeblvd_ltp').'</a></p>';
+		echo '<p><strong>Theme Blvd Layouts to Posts:</strong> '.__( 'You are not using both a theme with the Theme Blvd Framework v2.0+ and the Theme Blvd Layouts Builder plugin, and so this plugin will not do anything.', 'theme-blvd-layouts-to-posts' ).'</p>';
+		echo '<p><a href="'.themeblvd_ltp_disable_url('layouts-to-posts-no-framework').'">'.__('Dismiss this notice', 'theme-blvd-layouts-to-posts').'</a> | <a href="http://www.themeblvd.com" target="_blank">'.__('Visit ThemeBlvd.com', 'theme-blvd-layouts-to-posts').'</a></p>';
 		echo '</div>';
 	}
 }
@@ -93,21 +94,29 @@ function themeblvd_ltp_notice() {
 /**
  * Dismiss an admin notice.
  *
- * @since 1.0.2
+ * @since 1.0.6
  */
 function themeblvd_ltp_disable_nag() {
 
 	global $current_user;
 
-    if ( isset( $_GET['tb_nag_ignore'] ) ) {
-         add_user_meta( $current_user->ID, $_GET['tb_nag_ignore'], 'true', true );
+	if ( ! isset($_GET['nag-ignore']) ) {
+		return;
+	}
+
+	if ( strpos($_GET['nag-ignore'], 'tb-nag-') !== 0 ) { // meta key must start with "tb-nag-"
+		return;
+	}
+
+	if ( isset($_GET['security']) && wp_verify_nonce( $_GET['security'], 'themeblvd-layouts-to-posts-nag' ) ) {
+		add_user_meta( $current_user->ID, $_GET['nag-ignore'], 'true', true );
 	}
 }
 
 /**
- * Disable a nag message URL.
+ * Disable admin notice URL.
  *
- * @since 1.0.2
+ * @since 1.1.0
  */
 function themeblvd_ltp_disable_url( $id ) {
 
@@ -115,11 +124,13 @@ function themeblvd_ltp_disable_url( $id ) {
 
 	$url = admin_url( $pagenow );
 
-	if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
-		$url .= sprintf( '?%s&tb_nag_ignore=%s', $_SERVER['QUERY_STRING'], $id );
+	if( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+		$url .= sprintf( '?%s&nag-ignore=%s', $_SERVER['QUERY_STRING'], 'tb-nag-'.$id );
 	} else {
-		$url .= sprintf( '?tb_nag_ignore=%s', $id );
+		$url .= sprintf( '?nag-ignore=%s', 'tb-nag-'.$id );
 	}
+
+	$url .= sprintf( '&security=%s', wp_create_nonce('themeblvd-layouts-to-posts-nag') );
 
 	return $url;
 }
@@ -138,7 +149,7 @@ function themeblvd_ltp_add_meta_box() {
 	// Add meta box for each post type
 	foreach ( $post_types as $type ) {
 		if ( $type != 'attachment' && $type != 'page' ) {
-			add_meta_box( 'themeblvd_ltp', __('Custom Layout', 'themeblvd_ltp'), 'themeblvd_ltp_display_meta_box', $type, 'side' );
+			add_meta_box( 'themeblvd_ltp', __('Custom Layout', 'theme-blvd-layouts-to-posts'), 'themeblvd_ltp_display_meta_box', $type, 'side' );
 		}
 	}
 }
@@ -157,12 +168,12 @@ function themeblvd_ltp_display_meta_box() {
 	$settings = array( '_tb_custom_layout' => $value );
 
 	// Custom Layouts for options array
-	$select = array( '' => '-- '.__( 'No Custom Layouts', 'themeblvd_ltp' ).' --' );
+	$select = array( '' => '-- '.__( 'No Custom Layouts', 'theme-blvd-layouts-to-posts' ).' --' );
 	$layouts = get_posts('post_type=tb_layout&orderby=title&order=ASC&numberposts=-1');
 
 	if( $layouts ) {
 
-		$select = array( '' => '-- '.__( 'None', 'themeblvd_ltp' ).' --' );
+		$select = array( '' => '-- '.__( 'None', 'theme-blvd-layouts-to-posts' ).' --' );
 
 		foreach( $layouts as $layout ) {
 			$select[$layout->post_name] = $layout->post_title;
@@ -177,7 +188,7 @@ function themeblvd_ltp_display_meta_box() {
 		),
 		array(
 			'id'		=> '_tb_custom_layout',
-			'desc' 		=> __( 'If you\'d like to replace this post with a template from the Layout Builder, you can select one from the dropdown menu.', 'themeblvd_ltp' ),
+			'desc' 		=> __( 'If you\'d like to replace this post with a template from the Layout Builder, you can select one from the dropdown menu.', 'theme-blvd-layouts-to-posts' ),
 			'type' 		=> 'select',
 			'options'	=> $select
 		)
@@ -185,7 +196,7 @@ function themeblvd_ltp_display_meta_box() {
 
 	if ( version_compare(TB_FRAMEWORK_VERSION, '2.5.0', '<') ) {
 		unset($options[0]);
-		$options[1] = __( 'If you\'d like to replace this post with a custom layout from the Layout Builder, you can select one from the dropdown menu.', 'themeblvd_ltp' );
+		$options[1] = __( 'If you\'d like to replace this post with a custom layout from the Layout Builder, you can select one from the dropdown menu.', 'theme-blvd-layouts-to-posts' );
 	}
 
 	// Start output
