@@ -136,8 +136,8 @@ function themeblvd_ltp_add_meta_box() {
 	$post_types = apply_filters( 'themeblvd_ltp_post_types', $post_types );
 
 	// Add meta box for each post type
-	foreach( $post_types as $type ) {
-		if( $type != 'attachment' && $type != 'page' ) {
+	foreach ( $post_types as $type ) {
+		if ( $type != 'attachment' && $type != 'page' ) {
 			add_meta_box( 'themeblvd_ltp', __('Custom Layout', 'themeblvd_ltp'), 'themeblvd_ltp_display_meta_box', $type, 'side' );
 		}
 	}
@@ -148,7 +148,7 @@ function themeblvd_ltp_add_meta_box() {
  *
  * @since 1.0.0
  */
-function themeblvd_ltp_display_meta_box(){
+function themeblvd_ltp_display_meta_box() {
 
 	global $post;
 
@@ -160,7 +160,7 @@ function themeblvd_ltp_display_meta_box(){
 	$select = array( '' => '-- '.__( 'No Custom Layouts', 'themeblvd_ltp' ).' --' );
 	$layouts = get_posts('post_type=tb_layout&orderby=title&order=ASC&numberposts=-1');
 
-	if( $layouts ){
+	if( $layouts ) {
 
 		$select = array( '' => '-- '.__( 'None', 'themeblvd_ltp' ).' --' );
 
@@ -196,13 +196,13 @@ function themeblvd_ltp_display_meta_box(){
 	// clean this up and not to have to check for the
 	// different functions, simply requiring the user
 	// to update their theme.
-	if( function_exists( 'themeblvd_option_fields' ) ){
+	if ( function_exists( 'themeblvd_option_fields' ) ){
 
 		// Options form for TB framework v2.2+
     	$form = themeblvd_option_fields( 'themeblvd_ltp', $options, $settings, false );
     	echo $form[0];
 
-	} elseif( function_exists( 'optionsframework_fields' ) ) {
+	} else if( function_exists( 'optionsframework_fields' ) ) {
 
 		// Options form for TB framework v2.0 - v2.1
 		$form = optionsframework_fields( 'themeblvd_ltp', $options, $settings, false );
@@ -221,10 +221,17 @@ function themeblvd_ltp_display_meta_box(){
  * @since 1.0.0
  */
 function themeblvd_ltp_save_meta_box( $post_id ) {
-	// If our meta box's value was sent, let's save it.
-	if( isset( $_POST['themeblvd_ltp']['_tb_custom_layout'] ) ){
-		$vaue = apply_filters( 'themeblvd_sanitize_text', $_POST['themeblvd_ltp']['_tb_custom_layout'] ); // @todo - This technically won't do anything until TB framework v2.2
-		update_post_meta( $post_id, '_tb_custom_layout', $vaue );
+
+	if ( isset( $_POST['themeblvd_ltp']['_tb_custom_layout'] ) ) {
+
+		$value = apply_filters( 'themeblvd_sanitize_text', $_POST['themeblvd_ltp']['_tb_custom_layout'] );
+
+		if ( $value ) {
+			update_post_meta( $post_id, '_tb_custom_layout', $value );
+		} else {
+			delete_post_meta( $post_id, '_tb_custom_layout' );
+		}
+
 	}
 }
 
@@ -268,7 +275,7 @@ function themeblvd_ltp_frontend_config( $config ) {
 				// Get custom layout's settings and elements
 				$config['builder_post_id'] = themeblvd_post_id_by_name( $layout_name, 'tb_layout' ); // Needed in framework v2.2.1+
 
-				if ( $config['builder_post_id'] ) {
+				if ( $config['builder_post_id'] && version_compare(TB_FRAMEWORK_VERSION, '2.5.0', '<') ) {
 
 					// Setup featured area classes
 					$layout_elements = get_post_meta( $config['builder_post_id'], 'elements', true );
