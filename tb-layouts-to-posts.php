@@ -288,7 +288,11 @@ function themeblvd_ltp_frontend_config( $config ) {
 				if ( $config['builder_post_id'] && version_compare(TB_FRAMEWORK_VERSION, '2.5.0', '<') ) {
 
 					// Setup featured area classes
-					$layout_elements = get_post_meta( $config['builder_post_id'], 'elements', true );
+					$layout_elements = get_post_meta( $config['builder_post_id'], '_tb_builder_elements', true );
+
+					if ( ! $layout_elements ) { // This shouldn't happen if they're using Layout Builder 2.0+
+						$layout_elements = get_post_meta( $config['builder_post_id'], 'elements', true );
+					}
 
 					if ( function_exists( 'themeblvd_featured_builder_classes' ) ) {
 
