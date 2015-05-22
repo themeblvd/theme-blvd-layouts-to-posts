@@ -34,25 +34,25 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 
 == Changelog ==
 
-= 1.0.4 =
+= 1.0.4 - 05/21/2015 =
 
-= 1.0.3 =
+= 1.0.3 - 12/22/2014 =
 
 * Added compatibility for Theme Blvd framework v2.5+.
 * GlotPress compatibility (for 2015 wordpress.org release).
 * Minor security fixes.
 
-= 1.0.2 =
+= 1.0.2 - 08/15/2013 =
 
 * Added compatibility for Theme Blvd framework v2.3+.
 * Added support for private and password protected posts.
 * Added "Dismiss" link for admin framework nag.
 * Adjusted Custom Layout selection meta box to list layouts alphabetically.
 
-= 1.0.1 =
+= 1.0.1 - 02/31/2013 =
 
 * Added compatibility for Theme Blvd framework v2.2.1+.
 
-= 1.0.0 =
+= 1.0.0 - 08/26/2012 =
 
 * This is the first release.
