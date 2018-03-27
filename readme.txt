@@ -2,7 +2,8 @@
 Author URI: http://www.themeblvd.com
 Contributors: themeblvd
 Tags: layout builder, builder, custom layouts, themeblvd, theme blvd, jason bobich
-Stable Tag: 1.0.4
+Stable Tag: 1.0.5
+Tested up to: 4.9
 
 This plugin extends the Theme Blvd Layout Builder so you can assign your custom templates to standard posts and custom post types.
 
@@ -33,6 +34,8 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 1. Meta box added to all post edit screens.
 
 == Changelog ==
+
+= 1.0.5 - XX/XX/2018 =
 
 = 1.0.4 - 05/21/2015 =
 
