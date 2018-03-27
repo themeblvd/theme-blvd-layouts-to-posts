@@ -37,6 +37,8 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 
 = 1.0.5 - XX/XX/2018 =
 
+* Fixed: Styling of meta box was a bit wonky (for Theme Blvd framework 2.7+ themes).
+
 = 1.0.4 - 05/21/2015 =
 
 * Fixed: Issues with templates not showing featured area, when saved prior to Layout Builder 2.0 (for Theme Blvd framework 2.2-2.4 themes).

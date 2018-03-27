@@ -182,11 +182,6 @@ function themeblvd_ltp_display_meta_box() {
 
 	$options = array(
 		array(
-			'id' 	=> '_tb_placeholder',
-			'std'	=> 1,
-			'type'	=> 'hidden'
-		),
-		array(
 			'id'		=> '_tb_custom_layout',
 			'desc' 		=> __( 'If you\'d like to replace this post with a template from the Layout Builder, you can select one from the dropdown menu.', 'theme-blvd-layouts-to-posts' ),
 			'type' 		=> 'select',
@@ -198,8 +193,10 @@ function themeblvd_ltp_display_meta_box() {
 		unset($options[0]);
 	}
 
-	// Start output
-    echo '<div id="optionsframework" class="tb-meta-box side">';
+	// Start output.
+	// Note: #optionsframework ID needed prior to framewor 2.7.
+	// Note: .tb-options-wrap class needed in framework 2.7+.
+    echo '<div id="optionsframework" class="tb-meta-box tb-options-wrap side">';
 
 	// Display options form
 	// @todo - After framework v2.2 is released, we can
