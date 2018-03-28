@@ -35,7 +35,7 @@ add_filter( 'themeblvd_ltp_post_types', 'my_ltp_post_types' );`
 
 == Changelog ==
 
-= 1.0.5 - XX/XX/2018 =
+= 1.0.5 - 03/28/2018 =
 
 * Fixed: Password-protected posts display custom layout before password is entered (for Theme Blvd framework 2.7+ themes).
 * Fixed: Styling of meta box was a bit wonky (for Theme Blvd framework 2.7+ themes).
