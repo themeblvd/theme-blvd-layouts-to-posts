@@ -37,7 +37,7 @@ define( 'TB_LTP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
 function themeblvd_ltp_init() {
 
 	// Check to make sure Theme Blvd Framework is running
-	if( ! defined( 'TB_FRAMEWORK_VERSION' ) || ! defined( 'TB_BUILDER_PLUGIN_VERSION' ) ) {
+	if ( ! defined( 'TB_FRAMEWORK_VERSION' ) || ! defined( 'TB_BUILDER_PLUGIN_VERSION' ) ) {
 		add_action( 'admin_notices', 'themeblvd_ltp_notice' );
 		add_action( 'admin_init', 'themeblvd_ltp_disable_nag' );
 		return;
@@ -55,7 +55,7 @@ function themeblvd_ltp_init() {
 
 	// Also, if there was a custom layout assigned with our option,
 	// we need to redirect to the template_builder.php file.
-	add_action( 'template_redirect', 'themeblvd_ltp_redirect' );
+	add_action( 'template_include', 'themeblvd_ltp_redirect' );
 
 }
 add_action( 'after_setup_theme', 'themeblvd_ltp_init' );
@@ -124,7 +124,7 @@ function themeblvd_ltp_disable_url( $id ) {
 
 	$url = admin_url( $pagenow );
 
-	if( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+	if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
 		$url .= sprintf( '?%s&nag-ignore=%s', $_SERVER['QUERY_STRING'], 'tb-nag-'.$id );
 	} else {
 		$url .= sprintf( '?nag-ignore=%s', 'tb-nag-'.$id );
@@ -171,7 +171,7 @@ function themeblvd_ltp_display_meta_box() {
 	$select = array( '' => '-- '.__( 'No Custom Templates', 'theme-blvd-layouts-to-posts' ).' --' );
 	$layouts = get_posts('post_type=tb_layout&orderby=title&order=ASC&numberposts=-1');
 
-	if( $layouts ) {
+	if ( $layouts ) {
 
 		$select = array( '' => '-- '.__( 'None', 'theme-blvd-layouts-to-posts' ).' --' );
 
@@ -189,10 +189,6 @@ function themeblvd_ltp_display_meta_box() {
 		)
 	);
 
-	if ( version_compare(TB_FRAMEWORK_VERSION, '2.5.0', '<') ) {
-		unset($options[0]);
-	}
-
 	// Start output.
 	// Note: #optionsframework ID needed prior to framewor 2.7.
 	// Note: .tb-options-wrap class needed in framework 2.7+.
@@ -209,7 +205,7 @@ function themeblvd_ltp_display_meta_box() {
     	$form = themeblvd_option_fields( 'themeblvd_ltp', $options, $settings, false );
     	echo $form[0];
 
-	} else if( function_exists( 'optionsframework_fields' ) ) {
+	} elseif ( function_exists( 'optionsframework_fields' ) ) {
 
 		// Options form for TB framework v2.0 - v2.1
 		$form = optionsframework_fields( 'themeblvd_ltp', $options, $settings, false );
@@ -262,13 +258,13 @@ function themeblvd_ltp_frontend_config( $config ) {
 	global $post;
 
 	// If any single post type
-	if( is_single() ) {
+	if ( is_single() ) {
 
 		// Get layout name if its been saved to this post.
 		$layout_name = get_post_meta( $post->ID, '_tb_custom_layout', true );
 
 		// Only continue if a custom layout was selected
-		if( $layout_name ) {
+		if ( $layout_name ) {
 
 			if ( post_password_required() || ( 'private' == get_post_status() && ! current_user_can( 'edit_posts' ) ) ) {
 
@@ -281,6 +277,8 @@ function themeblvd_ltp_frontend_config( $config ) {
 
 				// Get custom layout's settings and elements
 				$config['builder_post_id'] = themeblvd_post_id_by_name( $layout_name, 'tb_layout' ); // Needed in framework v2.2.1+
+
+				$config['sidebar_layout'] = 'full_width';
 
 				if ( $config['builder_post_id'] && version_compare(TB_FRAMEWORK_VERSION, '2.5.0', '<') ) {
 
@@ -310,7 +308,7 @@ function themeblvd_ltp_frontend_config( $config ) {
 					$layout_settings = get_post_meta( $config['builder_post_id'], 'settings', true );
 					$config['sidebar_layout'] = $layout_settings['sidebar_layout'];
 
-					if( 'default' == $config['sidebar_layout'] ) {
+					if ( 'default' == $config['sidebar_layout'] ) {
 						$config['sidebar_layout'] = themeblvd_get_option( 'sidebar_layout', null, apply_filters( 'themeblvd_default_sidebar_layout', 'sidebar_right' ) );
 					}
 
@@ -324,6 +322,7 @@ function themeblvd_ltp_frontend_config( $config ) {
 		}
 
 	}
+
 	return $config;
 }
 
@@ -338,12 +337,25 @@ function themeblvd_ltp_frontend_config( $config ) {
  *
  * @since 1.0.0
  */
-function themeblvd_ltp_redirect( $config ) {
-	// Include page template and exit if this is a
-	// single post AND the global config says there
-	// is a custom layout
-	if( is_single() && themeblvd_config( 'builder' ) ) {
-		include_once( locate_template( 'template_builder.php' ) );
-		exit;
+function themeblvd_ltp_redirect( $template ) {
+
+	// If post is password-protected, allow to
+	// use single.php so that the password forms
+	// shows instead of the custom layout.
+	if ( post_password_required() ) {
+
+		return $template;
+
 	}
+
+	// If this is a single post with a template applied,
+	// use the template_builder.php page template instead.
+	if ( is_single() && themeblvd_config( 'builder' ) ) {
+
+		return locate_template( 'template_builder.php' );
+
+	}
+
+	return $template;
+
 }
